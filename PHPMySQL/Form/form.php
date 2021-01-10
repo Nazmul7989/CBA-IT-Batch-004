@@ -7,6 +7,10 @@ $connection= mysqli_connect($dbHost,$dbUser,$dbPassword,$dbName);
 
 $msg='';
 
+if (isset($_GET['message'])){
+    $msg= $_GET['message'];
+}
+
 
 if (isset($_POST['submit'])){
     $name=$_POST['name'];
@@ -17,10 +21,12 @@ if (isset($_POST['submit'])){
     $run=mysqli_query($connection,$insertSQL);
 
     if ($run==true){
-        $msg=  "Data Successfully Submitted";
+
+        header('location:form.php?message=Data Successfully Submitted');
+
     }
     else{
-        $msg= "Failed ! Please Try Again";
+        header('location:form.php?message=Failed ! Try Again');
     }
 
 }
@@ -28,6 +34,21 @@ if (isset($_POST['submit'])){
 
 $selectSQL="SELECT * FROM `students`";
 $runSelect=mysqli_query($connection,$selectSQL);
+
+if (isset($_POST['delete'])){
+    $deleteID= $_GET['did'];
+
+    $deleteSQL="DELETE FROM `students` WHERE `id`='$deleteID'";
+    $runDeleteSQL=mysqli_query($connection,$deleteSQL);
+    if ($runDeleteSQL==true){
+        header('location:form.php?message=Successfully Deleted!');
+    }
+    else{
+        header('location:form.php?message=Failed ! Please Try Again');
+    }
+}
+
+
 
 
 ?>
@@ -107,7 +128,7 @@ $runSelect=mysqli_query($connection,$selectSQL);
                     <td><?php echo $data['phone'] ?></td>
                     <td><?php echo $data['email'] ?></td>
                     <td><a href="formEdit.php?id=<?php echo $data['id']?>" class="btn btn-success">Edit</a></td>
-                    <td>Delete</td>
+                    <td><form method="post" action="form.php?did=<?php echo $data['id']?>"><input onclick="return confirm('Do You Want To Delete ?')" name="delete" class="btn btn-danger" value="DELETE" type="submit"></form></td>
                 </tr>
                 <?php } ?>
 
